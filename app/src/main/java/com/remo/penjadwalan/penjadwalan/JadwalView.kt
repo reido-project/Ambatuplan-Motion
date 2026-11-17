@@ -10,13 +10,21 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -29,13 +37,32 @@ import androidx.compose.ui.unit.dp
 fun JadwalScreen(){
     val vm = JadwalViewModel()
     val data by vm.jadwals.collectAsState()
+    var isFormOpen by remember { mutableStateOf(false) }
 
-    Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { isFormOpen = true },
+                contentColor = Color.White,
+                containerColor = Color.Blue,
+                content = { Icon(imageVector = Icons.Default.Add, contentDescription = "Open Jadwal Form", tint = Color.White) }
+            )
+        }
+    ) { innerPadding ->
         JadwalCatalog(
             data,
             onDelete = { id -> vm.delete(id) },
             Modifier.padding(innerPadding)
         )
+
+        if(isFormOpen){
+            JadwalForm(
+                onDismiss = { isFormOpen = false },
+                onSubmit = { jadwal -> vm.create(jadwal) },
+                lastIndex = { data.lastIndex }
+            )
+        }
     }
 }
 
@@ -46,6 +73,47 @@ fun JadwalCatalog(data: List<Jadwal>, onDelete: (Int) -> Unit, modifier: Modifie
             JadwalCard(it) { onDelete(it.id) }
         }
     }
+}
+
+@Composable
+fun JadwalForm(onDismiss: () -> Unit, onSubmit: (Jadwal) -> Unit, lastIndex: () -> Int){
+    var title by remember { mutableStateOf("") }
+    var desc by remember { mutableStateOf("") }
+    var isError by remember { mutableStateOf(false) }
+
+    AlertDialog(
+        title = { Text("Create Jadwal") },
+        onDismissRequest = onDismiss,
+        dismissButton = {
+            TextButton(onDismiss) {
+                Text("Batal")
+            }
+        },
+        confirmButton = {
+            Button(
+                {
+                    if(title.isNotBlank()){
+                        onSubmit(Jadwal(lastIndex() + 2, title, desc))
+                    }
+                    else{
+                        isError = true
+                    }
+                    onDismiss()
+                }
+            ) { Text("Submit") }
+        },
+        text = {
+            Column {
+                OutlinedTextField(value = title, label = { Text("Judul") }, singleLine = true, onValueChange = {
+                    title = it
+                })
+
+                OutlinedTextField(value = desc, label = { Text("Deskripsi") }, singleLine = false, onValueChange = {
+                    desc = it
+                })
+            }
+        }
+    )
 }
 
 @Composable
@@ -60,7 +128,9 @@ fun JadwalCard(
         .background(Color.Black)
     ){
         Column(
-            Modifier.weight(1f).padding(vertical = 8.dp, horizontal = 10.dp),
+            Modifier
+                .weight(1f)
+                .padding(vertical = 8.dp, horizontal = 10.dp),
             verticalArrangement = Arrangement.spacedBy(5.dp)
         ) {
             Text(jadwal.title, color = Color.White, fontWeight = FontWeight.Bold)
@@ -78,6 +148,7 @@ fun JadwalCard(
     showSystemUi = true
 )
 fun Preview(){
+    /*
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
         JadwalCatalog(
             listOf(
@@ -88,5 +159,6 @@ fun Preview(){
             {},
             Modifier.padding(innerPadding),
         )
-    }
+    }*/
+    JadwalForm({}, {}, {0})
 }

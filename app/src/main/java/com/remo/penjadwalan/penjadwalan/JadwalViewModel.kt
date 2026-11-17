@@ -19,5 +19,7 @@ class JadwalViewModel : ViewModel(){
         val jlist = _jadwals.value.toMutableList()
 
         jlist.removeIf { it.id == id }
+
+        _jadwals.value = jlist
     }
 }
