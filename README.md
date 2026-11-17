@@ -4,11 +4,10 @@
 **Jurusan:** S1 Rekayasa Perangkat Lunak
 
 # Ambatuplan
-**Previews**\
-![Ambatuplan kosong](references/empty-view.jpeg)\
-![Ambatuplan dengan data](references/entry-view.jpeg)\
-![Ambatuplan tambah jadwal](references/add-view.jpeg)\
-![Ambatuplan hasil](references/final-view.jpeg)
+## Previews
+| Tampilan Kosong | Dengan Data | Tambah Jadwal | Hasil Akhir |
+| :---: | :---: | :---: | :---: |
+| <img src="references/empty-view.jpeg" alt="Ambatuplan kosong" width="200"> | <img src="references/entry-view.jpeg" alt="Ambatuplan dengan data" width="200"> | <img src="references/add-view.jpeg" alt="Ambatuplan tambah jadwal" width="200"> | <img src="references/final-view.jpeg" alt="Ambatuplan hasil" width="200"> |
 
 # How to Run (Cara 1)
 1. Git clone repo ini
